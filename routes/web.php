@@ -28,6 +28,9 @@ Route::group([
     // store
     Route::post('', [DataController::class, 'store']);
 
+    // update
+    Route::put('', [DataController::class, 'update'])->name('update'); // data.update
+
     // load index data
     Route::get('load', [DataController::class, 'loadData']);
 });

@@ -73,6 +73,29 @@ class DataController extends Controller
     /**
      * @param  Request  $request
      *
+     * @return RedirectResponse
+     */
+    public function update(Request $request): RedirectResponse
+    {
+        if ($request->type == 'member') {
+            $data = Member::query();
+        } else {
+            $data = Institution::query();
+        }
+
+        $data
+            ->where('name', $request->last_name)
+            ->update([
+                'name' => $request->name,
+            ]);
+
+        return to_route('data.index')
+            ->with('success', 'Data berhasil diubah');
+    }
+
+    /**
+     * @param  Request  $request
+     *
      * @return JsonResponse
      */
     public function loadData(Request $request): JsonResponse

@@ -171,6 +171,60 @@
             });
         });
 
+        // Create a Bootstrap modal with a unique ID
+        let modal = $('<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">\
+                    <div class="modal-dialog">\
+                        <div class="modal-content">\
+                            <div class="modal-header">\
+                                <h5 class="modal-title" id="myModalLabel"></h5>\
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\
+                            </div>\
+                            <div class="modal-body">\
+                                <form method="post" id="memberForm">\
+                                <input type="hidden" name="_token" value="{{ @csrf_token() }}">\
+                                <input type="hidden" name="_method" value="put">\
+                                <input type="hidden" name="type" id="typeInput">\
+                                <input type="hidden" name="last_name" id="lastNameInput">\
+                                    <div class="mb-3">\
+                                        <label for="memberName" class="form-label" id="nameLabel"></label>\
+                                        <input type="text" class="form-control" id="nameInput" name="name" required>\
+                                    </div>\
+                                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>\
+                                </form>\
+                            </div>\
+                        </div>\
+                    </div>\
+            </div>');
+
+        // Append the modal to the body
+        $('body').append(modal);
+
+        // Event listener for member_name click
+        table.on('click', 'a.member-link', function () {
+            let rowData = table.DataTable().row($(this).closest('tr')).data();
+            let memberName = rowData.member_name;
+
+            $('#myModalLabel').html('Member Edit');
+            $('#nameLabel').html('Member Name');
+            $('#lastNameInput').val(memberName);
+            $('#nameInput').val(memberName);
+            $('#typeInput').val('member');
+            $('#myModal').modal('show');
+        });
+
+        // Event listener for institution_name click
+        table.on('click', 'a.institution-link', function () {
+            let rowData = table.DataTable().row($(this).closest('tr')).data();
+            let institutionName = rowData.institution_name;
+
+            $('#myModalLabel').html('Institution Edit');
+            $('#nameLabel').html('Institution Name');
+            $('#lastNameInput').val(institutionName);
+            $('#nameInput').val(institutionName);
+            $('#typeInput').val('institution');
+            $('#myModal').modal('show');
+        });
+
         table.DataTable({
             processing: true,
             ajax: {
@@ -178,10 +232,25 @@
                 dataSrc: 'data.points',
             },
             columns: [
-                {data: 'nomor'},
-                {data: 'member_name'},
-                {data: 'institution_name'},
-                {data: 'total'},
+                {
+                    data: 'nomor',
+                    searchable: false
+                },
+                {
+                    data: 'member_name',
+                    render: function (data) {
+                        return '<a href="#/" class="member-link">' + data + '</a>';
+                    }
+                },
+                {
+                    data: 'institution_name',
+                    render: function (data) {
+                        return '<a href="#/" class="institution-link">' + data + '</a>';
+                    }
+                },
+                {
+                    data: 'total'
+                },
             ]
         });
     });

@@ -15,6 +15,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 
 use function compact;
+use function collect;
 use function to_route;
 
 class DataController extends Controller
@@ -34,7 +35,28 @@ class DataController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('data.index', compact('members', 'institutions'));
+        $points = Point::query()
+            ->selectRaw('SUM(points_earned) as total')
+            ->join('tbl_member', 'tbl_point.member_id', '=', 'tbl_member.id')
+            ->join('tbl_institution', 'tbl_point.institution_id', '=', 'tbl_institution.id')
+            ->groupBy('tbl_member.id', 'tbl_institution.id')
+            ->get();
+
+        $collect = collect($points)
+            ->pluck('total')
+            ->unique();
+
+        $max = $collect
+            ->sortDesc()
+            ->values()
+            ->all();
+
+        $min = $collect
+            ->sort()
+            ->values()
+            ->all();
+
+        return view('data.index', compact('members', 'institutions', 'max', 'min'));
     }
 
     /**

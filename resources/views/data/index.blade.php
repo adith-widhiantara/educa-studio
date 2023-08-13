@@ -96,13 +96,23 @@
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="inputMinimalPoint" class="form-label">Minimal Point</label>
-                                <input type="number" class="form-control" id="inputMinimalPoint" min="0">
+                                <select class="form-select" aria-label="Default select example" id="inputMinimalPoint" required>
+                                    <option selected>Open this select menu</option>
+                                    @foreach($min as $int)
+                                        <option value="{{ $int }}">{{ $int }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="inputMaximalPoint" class="form-label">Maximal Point</label>
-                                <input type="number" class="form-control" id="inputMaximalPoint" min="0">
+                                <select class="form-select" aria-label="Default select example" id="inputMaximalPoint" required>
+                                    <option selected>Open this select menu</option>
+                                    @foreach($max as $int)
+                                        <option value="{{ $int }}">{{ $int }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-12">
@@ -152,6 +162,11 @@
         $('#submit').click(function () {
             let minimalPoint = $('#inputMinimalPoint').val();
             let maximalPoint = $('#inputMaximalPoint').val();
+
+            if (maximalPoint < minimalPoint) {
+                alert('Maximal point must be greater than minimal point');
+                return false;
+            }
 
             // get data from api
             $.ajax({
@@ -233,7 +248,7 @@
                 url: url,
                 type: 'DELETE',
                 data: formData,
-                success: function (response) {
+                success: function () {
                     // Close the modal
                     $('#myModal').modal('hide');
 

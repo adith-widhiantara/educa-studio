@@ -189,7 +189,14 @@
                                         <label for="memberName" class="form-label" id="nameLabel"></label>\
                                         <input type="text" class="form-control" id="nameInput" name="name" required>\
                                     </div>\
+                                    <div class="d-flex justify-content-between">\
+                                    <div>\
+                                    <a href="#/" class="btn btn-danger btn-sm" id="deleteData">Delete</a>\
+                                    </div>\
+                                    <div>\
                                     <button type="submit" class="btn btn-primary btn-sm">Submit</button>\
+                                    </div>\
+                                    </div>\
                                 </form>\
                             </div>\
                         </div>\
@@ -198,6 +205,47 @@
 
         // Append the modal to the body
         $('body').append(modal);
+
+        // delete
+        $('#deleteData').click(function () {
+            let formData = $('#memberForm').serialize();
+
+            // get last_name from formData
+            let name = formData.split('&')[3].split('=')[1];
+
+            // replace %20 with space
+            name = name.replace(/%20/g, ' ');
+
+            // replace %2C with comma
+            name = name.replace(/%2C/g, ',');
+
+            // replace %2E with dot
+            name = name.replace(/%2E/g, '.');
+
+            // get type from formData
+            let type = formData.split('&')[2].split('=')[1];
+
+            if (confirm('If you delete ' + name + ' as a ' + type + ', it will also delete all integrated data associated with it, and the data cannot be restored. Are you sure?') === false) {
+                return false;
+            }
+
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                data: formData,
+                success: function (response) {
+                    // Close the modal
+                    $('#myModal').modal('hide');
+
+                    // Refresh DataTable to reflect changes
+                    table.DataTable().ajax.reload();
+                },
+                error: function (error) {
+                    console.error('Error deleting data:', error);
+                    // Handle error if needed
+                }
+            });
+        });
 
         // Event listener for member_name click
         table.on('click', 'a.member-link', function () {

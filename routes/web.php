@@ -31,6 +31,9 @@ Route::group([
     // update
     Route::put('', [DataController::class, 'update'])->name('update'); // data.update
 
+    // destroy
+    Route::delete('load', [DataController::class, 'destroy'])->name('destroy'); // data.destroy
+
     // load index data
     Route::get('load', [DataController::class, 'loadData']);
 });

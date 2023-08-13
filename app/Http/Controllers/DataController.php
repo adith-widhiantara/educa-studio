@@ -96,6 +96,31 @@ class DataController extends Controller
     /**
      * @param  Request  $request
      *
+     * @return mixed
+     */
+    public function destroy(Request $request): mixed
+    {
+        if ($request->type == 'member') {
+            $data = Member::query();
+        } else {
+            $data = Institution::query();
+        }
+
+        $data = $data
+            ->where('name', $request->last_name)
+            ->first();
+
+        Point::query()
+            ->where('member_id', $data->id)
+            ->orWhere('institution_id', $data->id)
+            ->delete();
+
+        return $data->delete();
+    }
+
+    /**
+     * @param  Request  $request
+     *
      * @return JsonResponse
      */
     public function loadData(Request $request): JsonResponse

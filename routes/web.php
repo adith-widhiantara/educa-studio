@@ -18,5 +18,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('data', [DataController::class, 'index']);
-Route::get('data/load', [DataController::class, 'loadData']);
+Route::group([
+    'prefix' => 'data',
+    'as' => 'data.',
+], function () {
+    // index
+    Route::get('', [DataController::class, 'index'])->name('index'); // data.index
+
+    // store
+    Route::post('', [DataController::class, 'store']);
+
+    // load index data
+    Route::get('load', [DataController::class, 'loadData']);
+});

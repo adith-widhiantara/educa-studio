@@ -20,6 +20,78 @@
         <div class="col-8 offset-2 mb-3">
             <div class="card">
                 <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Data</a>
+                </div>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="inputName" class="form-label">Name</label>
+                                    <select class="form-select" aria-label="Default select example" name="member" required>
+                                        <option selected value="">Open this select menu</option>
+                                        @foreach($members as $member)
+                                            <option value="{{ $member->name }}">{{ $member->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="inputInstitution" class="form-label">Institution</label>
+                                    <select class="form-select" aria-label="Default select example" name="institution" required>
+                                        <option selected>Open this select menu</option>
+                                        @foreach($institutions as $institution)
+                                            <option value="{{ $institution->name }}">{{ $institution->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="inputPoint" class="form-label">Point</label>
+                                    <input type="number" class="form-control" id="inputPoint" name="point" value="{{ old('point') }}" min="0" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-8 offset-2 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="text-center">Filter Point</h5>
+                </div>
+                <div class="card-body">
                     <div class="row">
                         <div class="col-6">
                             <div class="mb-3">
@@ -34,7 +106,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <a href="#/" class="btn btn-primary" id="submit">Submit</a>
+                            <a href="#/" class="btn btn-primary btn-sm" id="submit">Submit</a>
                         </div>
                     </div>
                 </div>

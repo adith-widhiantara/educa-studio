@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Point;
+use App\Models\Member;
 use App\Responses\Response;
+use App\Models\Institution;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+
+use function compact;
+use function to_route;
 
 class DataController extends Controller
 {
@@ -17,7 +24,50 @@ class DataController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('data.index');
+        $members = Member::query()
+            ->select('name')
+            ->orderBy('name')
+            ->get();
+
+        $institutions = Institution::query()
+            ->select('name')
+            ->orderBy('name')
+            ->get();
+
+        return view('data.index', compact('members', 'institutions'));
+    }
+
+    /**
+     * @param  Request  $request
+     *
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'member' => ['required', 'string', 'max:255', Rule::exists('tbl_member', 'name')],
+            'institution' => ['required', 'string', 'max:255', Rule::exists('tbl_institution', 'name')],
+            'point' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $members = Member::query()
+            ->where('name', $request->member)
+            ->value('id');
+
+        $institutions = Institution::query()
+            ->where('name', $request->institution)
+            ->value('id');
+
+        Point::query()
+            ->create([
+                'member_id' => $members,
+                'institution_id' => $institutions,
+                'points_earned' => $request->point,
+                'transaction_date' => now(),
+            ]);
+
+        return to_route('data.index')
+            ->with('success', 'Data berhasil ditambahkan');
     }
 
     /**
